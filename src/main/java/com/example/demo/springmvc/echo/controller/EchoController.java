@@ -1,7 +1,7 @@
-package com.example.demo.echo.controller;
+package com.example.demo.springmvc.echo.controller;
 
-import com.example.demo.echo.domain.Echo;
-import com.example.demo.echo.domain.Message;
+import com.example.demo.springmvc.echo.domain.Echo;
+import com.example.demo.springmvc.echo.domain.Message;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.atomic.AtomicLong;

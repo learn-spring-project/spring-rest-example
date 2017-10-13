@@ -1,4 +1,4 @@
-package com.example.demo.echo.domain;
+package com.example.demo.springmvc.echo.domain;
 
 /**
  * Created by Administrator on 2017/10/12.

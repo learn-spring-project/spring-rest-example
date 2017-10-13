@@ -6,14 +6,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@RestController
+//@RestController
 @SpringBootApplication
 public class SpringRestfulExampleApplication {
 
-	@RequestMapping("/")
+/*	@RequestMapping("/")
 	String index(){
 		return  "hello restful";
-	}
+	}*/
 	public static void main(String[] args) {
 		SpringApplication.run(SpringRestfulExampleApplication.class, args);
 	}
