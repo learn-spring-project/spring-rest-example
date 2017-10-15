@@ -1,10 +1,18 @@
 package com.example.demo;
 
 import com.example.demo.jersey2.user.domain.User;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -12,7 +20,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -119,6 +129,19 @@ public class SpringRestfulExampleApplicationTests {
 		System.out.println(responseEntity.getBody());
 	}
 
+	//RestTemplate 查询参数有特殊字符
+	@Test
+	public void postWithQuerySpecialParam()
+	{
+		String url = "http://localhost:8080/user/one?name=zzh";
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+		builder.queryParam("test", "haha");
+		URI uri = builder.build().encode().toUri();
+		System.out.println(uri.toString());
+		ResponseEntity responseEntity = restTemplate.exchange(uri, HttpMethod.GET, null, String.class);
+		System.out.println(responseEntity.getBody());
+	}
+
 	/**
 	 * GET请求,要返回一些复合数据类型时的处理
 	 * (1)返回List类型数据
@@ -140,4 +163,31 @@ public class SpringRestfulExampleApplicationTests {
 	 ObjectMapper mapper = new ObjectMapper(); mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	 PageInfo<Product> page = mapper.readValue(results.getBody(), new TypeReference<PageInfo<Product>>() { });
 	 */
+
+	//Spring RestTemplate and Proxy Auth
+	@Test
+	public void  restTemplateWithProxyAuth()  throws Exception
+	{
+		final String username = "myusername";
+		final String password = "myPass";
+		final String proxyUrl = "proxy.nyc.bigtower.com";
+		final int port = 8080;
+
+		CredentialsProvider credsProvider = new BasicCredentialsProvider();
+		credsProvider.setCredentials(
+				new AuthScope(proxyUrl, port),
+				new UsernamePasswordCredentials(username, password));
+
+		HttpHost myProxy = new HttpHost(proxyUrl, port);
+		HttpClientBuilder clientBuilder = HttpClientBuilder.create();
+
+		clientBuilder.setProxy(myProxy).setDefaultCredentialsProvider(credsProvider).disableCookieManagement();
+
+		HttpClient httpClient = clientBuilder.build();
+		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+		factory.setHttpClient(httpClient);
+
+		RestTemplate restTemplate = new RestTemplate(factory);
+		System.out.println(restTemplate.toString());
+	}
 }

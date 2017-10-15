@@ -44,13 +44,18 @@
 		</dependency>
 
 
-		<dependency>
+<!--		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>-->
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
 		</dependency>
 
-<!--
 
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -62,7 +67,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
-		</dependency>-->
+		</dependency>
 	</dependencies>
 
 	<build>
