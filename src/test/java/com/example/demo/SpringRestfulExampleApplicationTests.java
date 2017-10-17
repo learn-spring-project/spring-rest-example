@@ -121,7 +121,7 @@ public class SpringRestfulExampleApplicationTests {
 	}
 
 	@Test
-	public void postWithQueryParam2()
+	public void getWithQueryParam2()
 	{
 		MultiValueMap<String, String> map = new LinkedMultiValueMap();
 		map.add("name", "zzh");
@@ -131,7 +131,7 @@ public class SpringRestfulExampleApplicationTests {
 
 	//RestTemplate 查询参数有特殊字符
 	@Test
-	public void postWithQuerySpecialParam()
+	public void getWithQuerySpecialParam()
 	{
 		String url = "http://localhost:8080/user/one?name=zzh";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
