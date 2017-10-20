@@ -32,16 +32,41 @@ import java.util.List;
 /**
  * Created by Administrator on 2017/10/15.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = SpringRestfulExampleApplication.class)
+
+
 public class HttpClientTest {
+    //简单的模拟一下发送HttpPost请求
+    @Test
+    public void testPostMethod() throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        //创建一个post对象
+        HttpPost httpPost = new HttpPost("http://localhost:8080/user/new");
+
+        User user = new User("zzh", 1);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonObject = objectMapper.writeValueAsString(user);
+        StringEntity entity = new StringEntity(jsonObject, ContentType.APPLICATION_JSON);
+        //设置请求的内容
+        httpPost.setEntity(entity);
+        //设置请求头
+        httpPost.setHeader("username", "zzh2");
+
+        //执行post请求
+        CloseableHttpResponse response = httpClient.execute(httpPost);
+        String string = EntityUtils.toString(response.getEntity());
+        System.out.println(string);
+        response.close();
+        httpClient.close();
+
+    }
 
     @Test
     public void testGetMethod() throws URISyntaxException, IOException {
         //构建一个httpclient对象
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         //构建一个uri对象
-        URIBuilder uriBuilder = new URIBuilder("http://localhost:8080/user/zzh");
+        URIBuilder uriBuilder = new URIBuilder("http://localhost:8080/user/1");
         uriBuilder.addParameter("test", "haha");
         HttpGet get = new HttpGet(uriBuilder.build());
         //执行请求
@@ -57,29 +82,5 @@ public class HttpClientTest {
         httpClient.close();
     }
 
-    //简单的模拟一下发送HttpPost请求
-    @Test
-    public void testPostMethod() throws IOException {
-        CloseableHttpClient  httpClient = HttpClients.createDefault();
-        //创建一个post对象
-        HttpPost httpPost = new HttpPost("http://localhost:8080/user/user");
 
-        User user = new User();
-        user.setUserId(1);
-        user.setUserName("zzh");
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonObject = objectMapper.writeValueAsString(user);
-        StringEntity entity = new StringEntity(jsonObject, ContentType.APPLICATION_JSON);
-        //设置请求的内容
-        httpPost.setEntity(entity);
-        httpPost.setHeader("username", "zzh2");
-        //执行post请求
-        CloseableHttpResponse response = httpClient.execute(httpPost);
-        String string = EntityUtils.toString(response.getEntity());
-        System.out.println(string);
-        response.close();
-        httpClient.close();
-
-    }
 }

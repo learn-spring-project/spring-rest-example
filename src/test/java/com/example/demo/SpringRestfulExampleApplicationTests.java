@@ -64,20 +64,20 @@ public class SpringRestfulExampleApplicationTests {
 		ResponseEntity response=restTemplate.exchange("http://localhost:8080/user/header",HttpMethod.GET,httpEntity,String.class);
 		System.out.println(response.getBody());
 		System.out.println(response.getStatusCode());
-		System.out.println(response.getHeaders());
+		System.out.println(response.getHeaders().get("xxx").get(0));
 	}
 
 	@Test
 	public void getString()
 	{
-		String response = restTemplate.getForObject("http://localhost:8080/user/zzh", String.class);
+		String response = restTemplate.getForObject("http://localhost:8080/user/string?name=zzh", String.class);
 		System.out.println(response);
 	}
 
 	@Test
 	public void getObject()
 	{
-		User response = restTemplate.getForObject("http://localhost:8080/user/zzh", User.class);
+		User response = restTemplate.getForObject("http://localhost:8080/user/1", User.class);
 		System.out.println(response);
 		System.out.println(response.getUserId());
 		System.out.println(response.getUserName());
@@ -86,7 +86,7 @@ public class SpringRestfulExampleApplicationTests {
 	@Test
 	public void getMap()
 	{
-		Map response = restTemplate.getForObject("http://localhost:8080/user/zzh", Map.class);
+		Map response = restTemplate.getForObject("http://localhost:8080/user/1", Map.class);
 		System.out.println(response);
 		System.out.println(response.get("userName"));
 		System.out.println(response.get("userId"));
@@ -98,25 +98,23 @@ public class SpringRestfulExampleApplicationTests {
 
 		//2.设置参数
 		Map<String, String> map = new LinkedMultiValueMap();
-		User user = new User();
-		user.setUserId(1);
-		user.setUserName("zzh");
+		User user = new User("zzh",1);
 		HttpEntity httpEntity = new HttpEntity(user);
 		//3.执行请求
-		ResponseEntity responseEntity = restTemplate.exchange("http://localhost:8080/user/user", HttpMethod.POST,httpEntity, User.class);
+		ResponseEntity responseEntity = restTemplate.exchange("http://localhost:8080/user/new", HttpMethod.POST,httpEntity, User.class);
 		//4.获取返回结果
 		System.out.println(responseEntity.getBody().toString());
 	}
 
 	@Test
 	public void postWithQueryParam(){
-		String response = restTemplate.getForObject("http://localhost:8080/user/one?name=zzh", String.class);
+		String response = restTemplate.getForObject("http://localhost:8080/user/user?id=1", String.class);
 		System.out.println(response);
 	}
 
 	@Test
 	public void postWithQueryParam1(){
-		ResponseEntity responseEntity = restTemplate.exchange("http://localhost:8080/user/one?name={name}", HttpMethod.GET, null,String.class, "zzh");
+		ResponseEntity responseEntity = restTemplate.exchange("http://localhost:8080/user/user?id={id}", HttpMethod.GET, null,String.class, 1);
 		System.out.println(responseEntity.getBody());
 	}
 
@@ -125,7 +123,7 @@ public class SpringRestfulExampleApplicationTests {
 	{
 		MultiValueMap<String, String> map = new LinkedMultiValueMap();
 		map.add("name", "zzh");
-		ResponseEntity responseEntity = restTemplate.exchange("http://localhost:8080/user/one?name={name}", HttpMethod.GET, null, String.class, map);
+		ResponseEntity responseEntity = restTemplate.exchange("http://localhost:8080/user/string?name={name}", HttpMethod.GET, null, String.class, map);
 		System.out.println(responseEntity.getBody());
 	}
 
@@ -133,7 +131,7 @@ public class SpringRestfulExampleApplicationTests {
 	@Test
 	public void getWithQuerySpecialParam()
 	{
-		String url = "http://localhost:8080/user/one?name=zzh";
+		String url = "http://localhost:8080/user/user?id=1";
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
 		builder.queryParam("test", "haha");
 		URI uri = builder.build().encode().toUri();
