@@ -19,6 +19,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
+import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -187,5 +190,31 @@ public class SpringRestfulExampleApplicationTests {
 
 		RestTemplate restTemplate = new RestTemplate(factory);
 		System.out.println(restTemplate.toString());
+	}
+
+	/**
+	 * 异步调用
+	 * @return
+	 */
+    @Test
+	public String async(){
+		AsyncRestTemplate template = new AsyncRestTemplate();
+		String url = "http://localhost:8080/async/fivetime";//休眠5秒的服务
+		//调用完后立即返回（没有阻塞）
+		ListenableFuture<ResponseEntity<String>> forEntity = template.getForEntity(url, String.class);
+		//异步调用后的回调函数
+		forEntity.addCallback(new ListenableFutureCallback<ResponseEntity<String>>() {
+			//调用失败
+			@Override
+			public void onFailure(Throwable ex) {
+				System.out.println("=====rest response faliure======");
+			}
+			//调用成功
+			@Override
+			public void onSuccess(ResponseEntity<String> result) {
+				System.out.println("--->async rest response success----, result = "+result.getBody());
+			}
+		});
+		return "异步调用结束";
 	}
 }
